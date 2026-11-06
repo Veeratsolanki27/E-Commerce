@@ -2,8 +2,11 @@
 import React, { useState } from "react";
 import { assets } from "@/assets/assets";
 import Image from "next/image";
+import { useAppContext } from "@/context/AppContext";
+import toast from "react-hot-toast";
 
 const AddProduct = () => {
+  const { addProduct, router } = useAppContext();
 
   const [files, setFiles] = useState([]);
   const [name, setName] = useState('');
@@ -14,7 +17,29 @@ const AddProduct = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!name || !description || !price || !offerPrice) {
+      toast.error("Please fill in all required fields!");
+      return;
+    }
 
+    const imageUrls = files.filter(Boolean).map((file) => URL.createObjectURL(file));
+    if (imageUrls.length === 0) {
+      imageUrls.push(assets.upload_area.src || assets.upload_area);
+    }
+
+    const newProduct = {
+      _id: "prod_" + Date.now(),
+      name,
+      description,
+      category,
+      price: Number(price),
+      offerPrice: Number(offerPrice),
+      image: imageUrls,
+      date: Date.now()
+    };
+
+    addProduct(newProduct);
+    router.push('/seller/product-list');
   };
 
   return (
@@ -33,7 +58,7 @@ const AddProduct = () => {
                 }} type="file" id={`image${index}`} hidden />
                 <Image
                   key={index}
-                  className="max-w-24 cursor-pointer"
+                  className="max-w-24 cursor-pointer object-cover h-24 w-24 rounded border"
                   src={files[index] ? URL.createObjectURL(files[index]) : assets.upload_area}
                   alt=""
                   width={100}
@@ -52,7 +77,7 @@ const AddProduct = () => {
             id="product-name"
             type="text"
             placeholder="Type here"
-            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 focus:border-orange-500"
             onChange={(e) => setName(e.target.value)}
             value={name}
             required
@@ -68,7 +93,7 @@ const AddProduct = () => {
           <textarea
             id="product-description"
             rows={4}
-            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 resize-none"
+            className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 resize-none focus:border-orange-500"
             placeholder="Type here"
             onChange={(e) => setDescription(e.target.value)}
             value={description}
@@ -84,7 +109,7 @@ const AddProduct = () => {
               id="category"
               className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
               onChange={(e) => setCategory(e.target.value)}
-              defaultValue={category}
+              value={category}
             >
               <option value="Earphone">Earphone</option>
               <option value="Headphone">Headphone</option>
@@ -103,7 +128,7 @@ const AddProduct = () => {
               id="product-price"
               type="number"
               placeholder="0"
-              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 focus:border-orange-500"
               onChange={(e) => setPrice(e.target.value)}
               value={price}
               required
@@ -117,20 +142,19 @@ const AddProduct = () => {
               id="offer-price"
               type="number"
               placeholder="0"
-              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
+              className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40 focus:border-orange-500"
               onChange={(e) => setOfferPrice(e.target.value)}
               value={offerPrice}
               required
             />
           </div>
         </div>
-        <button type="submit" className="px-8 py-2.5 bg-orange-600 text-white font-medium rounded">
-          ADD
+        <button type="submit" className="px-8 py-2.5 bg-orange-600 text-white font-medium rounded hover:bg-orange-700 transition">
+          ADD PRODUCT
         </button>
       </form>
-      {/* <Footer /> */}
     </div>
   );
 };
 
-export default AddProduct;
+export default AddProduct;

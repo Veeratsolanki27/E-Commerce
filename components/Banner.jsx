@@ -1,8 +1,13 @@
+'use client'
 import React from "react";
+
 import { assets } from "@/assets/assets";
 import Image from "next/image";
+import { useAppContext } from "@/context/AppContext";
 
 const Banner = () => {
+  const { router } = useAppContext();
+
   return (
     <div className="flex flex-col md:flex-row items-center justify-between md:pl-20 py-14 md:py-0 bg-[#E6E9F2] my-16 rounded-xl overflow-hidden">
       <Image
@@ -17,10 +22,11 @@ const Banner = () => {
         <p className="max-w-[343px] font-medium text-gray-800/60">
           From immersive sound to precise controls—everything you need to win
         </p>
-        <button className="group flex items-center justify-center gap-1 px-12 py-2.5 bg-orange-600 rounded text-white">
+        <button suppressHydrationWarning onClick={() => router.push('/all-products')} className="group flex items-center justify-center gap-1 px-12 py-2.5 bg-orange-600 hover:bg-orange-700 transition rounded text-white font-medium">
           Buy now
           <Image className="group-hover:translate-x-1 transition" src={assets.arrow_icon_white} alt="arrow_icon_white" />
         </button>
+
       </div>
       <Image
         className="hidden md:block max-w-80"
@@ -36,4 +42,4 @@ const Banner = () => {
   );
 };
 
-export default Banner;
+export default Banner;
